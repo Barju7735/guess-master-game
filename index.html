@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess Master</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#180b35">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: white;
+  background: linear-gradient(135deg,#090b22,#24105c,#52117c);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.game {
+  width: 100%;
+  max-width: 390px;
+  padding: 28px 22px;
+  border-radius: 28px;
+  text-align: center;
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+  backdrop-filter: blur(15px);
+}
+
+.logo {
+  font-size: 55px;
+  margin-bottom: 5px;
+}
+
+h1 {
+  font-size: 29px;
+  margin: 8px 0;
+  background: linear-gradient(90deg,#ffd166,#ff75c3);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  color: #c9c4e9;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.range {
+  background: rgba(255,255,255,0.08);
+  padding: 13px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  color: #e3d9ff;
+}
+
+input {
+  width: 100%;
+  padding: 17px;
+  border-radius: 15px;
+  border: 2px solid #7956df;
+  background: #17142e;
+  color: white;
+  text-align: center;
+  font-size: 24px;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 16px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 15px;
+  background: linear-gradient(90deg,#7657ff,#d04cff);
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 20px #7657ff55;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+#message {
+  min-height: 30px;
+  margin: 25px 0 15px;
+  font-size: 20px;
+  color: #ffd166;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.stat {
+  background: rgba(255,255,255,0.09);
+  padding: 15px 8px;
+  border-radius: 14px;
+  width: 50%;
+}
+
+.stat small {
+  color: #c9c4e9;
+}
+
+.stat h2 {
+  margin: 8px 0 0;
+  color: #ffd166;
+}
+
+.restart {
+  background: linear-gradient(90deg,#13b8a6,#397bff);
+  box-shadow: none;
+}
+
+.footer {
+  color: #aaa3d1;
+  font-size: 12px;
+  margin-top: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <div class="logo">🎮</div>
+
+  <h1>GUESS MASTER</h1>
+
+  <p class="subtitle">Challenge Your Brain!</p>
+
+  <div class="range">
+    ✨ Guess a Number Between 1 - 10 ✨
+  </div>
+
+  <input
+    type="number"
+    id="guess"
+    placeholder="Enter Number"
+    min="1"
+    max="100"
+  >
+
+  <button onclick="checkGuess()">
+    🚀 SUBMIT GUESS
+  </button>
+
+  <h3 id="message">Let's Play! 🎯</h3>
+
+  <div class="stats">
+
+    <div class="stat">
+      <small>Attempts Left</small>
+      <h2 id="attempts">3</h2>
+    </div>
+
+    <div class="stat">
+      <small>Best Score</small>
+      <h2 id="best">0</h2>
+    </div>
+
+  </div>
+
+  <button class="restart" onclick="restartGame()">
+    🔄 PLAY AGAIN
+  </button>
+
+  <p class="footer">
+    Made with ❤️ | Guess Master Game
+  </p>
+
+</div>
+
+<script>
+
+let secret = Math.floor(Math.random()*10)+1;
+let attempts = 3;
+let finished = false;
+
+let best = Number(localStorage.getItem("bestScore")) || 0;
+
+document.getElementById("best").innerText = best;
+
+function checkGuess() {
+
+  let guess = Number(document.getElementById("guess").value);
+  let msg = document.getElementById("message");
+
+  if(finished) return;
+
+  if (!Number.isInteger(guess) || guess < 1 || guess > 10) {
+    msg.innerText = "⚠️ Enter Number 1 to 10";
+    return;
+  }
+    
+    
+  
+
+  if(guess === secret) {
+
+    msg.innerText = "🏆 AMAZING! YOU WIN!";
+    finished = true;
+try {celebrate();
+  let audio = new (window.AudioContext || window.webkitAudioContext)();
+  let sound = audio.createOscillator();
+  sound.connect(audio.destination);
+  sound.frequency.value = 880;
+  sound.start();
+  sound.stop(audio.currentTime + 0.3);
+} catch(e) {}
+    let score = attempts + 1;
+
+    if(score > best) {
+      best = score;
+      localStorage.setItem("bestScore", best);
+      document.getElementById("best").innerText = best;
+    }
+
+  } else {
+
+    attempts--;
+
+    if(attempts === 0) {
+      msg.innerText = "❌ GAME OVER! Number: " + secret;
+      finished = true;
+    }
+    else if(guess > secret) {
+      msg.innerText = "⬆️ TOO HIGH! Try Lower";
+    }
+    else {
+      msg.innerText = "⬇️ TOO LOW! Try Higher";
+    }
+
+  }
+
+  document.getElementById("attempts").innerText = attempts;
+}
+
+function restartGame() {
+
+  secret = Math.floor(Math.random()*10)+1;
+  attempts = 3;
+  finished = false;
+
+  document.getElementById("attempts").innerText = 3;
+  document.getElementById("message").innerText = "Let's Play! 🎯";
+  document.getElementById("guess").value = "";
+
+}
+function celebrate() {
+  for (let i = 0; i < 50; i++) {
+    let confetti = document.createElement("div");
+    confetti.innerText = "🎉";
+    confetti.style.position = "fixed";
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.top = "-30px";
+    confetti.style.fontSize = "25px";
+    confetti.style.zIndex = "9999";
+    document.body.appendChild(confetti);
+
+    let fall = confetti.animate(
+      [{ top: "-30px" }, { top: "100vh" }],
+      { duration: 2000, iterations: 1 }
+    );
+
+    fall.onfinish = () => confetti.remove();
+  }
+  }
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("App Ready!"))
+      .catch((error) => console.log("SW Error:", error));
+  });
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+
+{
+  "name": "Guess Master",
+  "short_name": "Guess Master",
+  "description": "A fun number guessing game",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#180b35",
+  "theme_color": "#180b35",
+  "orientation": "portrait"
+}
